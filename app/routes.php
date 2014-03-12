@@ -18,30 +18,4 @@ Route::get('/', function()
 
 Route::controller('user', 'UserController');
 
-Route::get('user', function()
-{
-	if (Auth::check()) {
-		$user_id = Auth::user()->user_id;
-		return Redirect::to('/user/' . $user_id . '/dashboard');
-	}
-	else {
-		return Redirect::to('user/login');
-	}
-});
-
-Route::get('user/{user_id}', function($user_id)
-{
-	if (Auth::check()) {
-		$user_id = Auth::user()->user_id;
-		return Redirect::to('/user/' . $user_id . '/dashboard');
-	}
-	else {
-		return Redirect::to('user/login');
-	}
-})->where('user_id', '[0-9]+');
-
-Route::get('logout', function(){
-	Auth::logout();
-	return Redirect::to('user/login')
-	->with('message', 'You are now logged out');
-});
+Route::controller('service', 'ServiceController');

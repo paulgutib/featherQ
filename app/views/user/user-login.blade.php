@@ -5,7 +5,7 @@
 @stop
 
 @section('content')
-{{Form::open()}}
+{{ Form::open(array('url'=>'user/signin', 'class'=>'form-login')) }}
 	<div>
 		<div class="form-group">
 			{{Form::label('Username')}} {{Form::text('username')}}

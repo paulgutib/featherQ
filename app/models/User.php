@@ -49,12 +49,18 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return $this->email;
 	}
 	
+	public $timestamps = false;
+	
 	public function priorityQueue() {
 		return $this->belongsTo('PriorityQueue');
 	}
 	
 	public function terminal() {
 		return $this->belongsTo('Terminal');
+	}
+	
+	public function role($user_id) {
+		
 	}
 	
 	public static $rules = array(
@@ -65,31 +71,5 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'password'=>'required|between:6,30|confirmed',
 		'password_confirmation'=>'required|between:6,30'
 	);
-	
-	private $username;
-	private $password;
-	private $email;
-	private $phone;
-	
-	public function setUsername($arg0) {
-		return $this->username = $arg0;
-	}
-	
-	public function setPassword($arg0) {
-		return $this->password = $arg0;
-	}
-	
-	public function setEmail($arg0) {
-		return $this->email = $arg0;
-	}
-	
-	public function setPhone($arg0) {
-		return $this->phone = $arg0;
-	}
-	
-	public function register() {
-		$sql = 'INSERT INTO user (email, username, password, phone) VALUES (?, ?, ?, ?)';
-		DB::insert($sql, array($this->email, $this->username, $this->password, $this->phone));
-	}
 	
 }
