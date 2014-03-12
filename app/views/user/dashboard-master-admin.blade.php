@@ -8,7 +8,7 @@
 @section('content')
 <div>
 	<h3>Available Services: </h3>
-	{{Form::open(array('url' => 'service/delete'))}}
+	{{Form::open(array('url' => 'service/updatedelete'))}}
 	<table cellpadding="1" border="1px">
 		<tr>
 			<td>Service Name</td>
@@ -17,6 +17,7 @@
 			<td>Total Queue</td>
 			<td>Get a Number</td>
 			<td>Your Number</td>
+			<td>Active? (Y/N)</td>
 			<td>Delete</td>
 	  </tr>
 	  @if (isset($available_services))
@@ -28,13 +29,17 @@
 				<td> - </td>
 				<td> -</td>
 				<td> - </td>
+				<td>
+					Yes {{ Form::radio('service_status_' . $service_id, 1, 1 == $services_status[$service_id]) }}
+					No {{ Form::radio('service_status_' . $service_id, 0, 0 == $services_status[$service_id]) }}
+				</td>
 				<td>{{ Form::checkbox('service_delete[]', $service_id) }}</td>
 		  </tr>
 		  @endforeach
 		@endif
 	</table>
 	<br/>
-	{{ Form::submit('DELETE') }}
+	{{ Form::submit('DELETE/UPDATE STATUS') }}
 	{{Form::close()}}
 </div>
 

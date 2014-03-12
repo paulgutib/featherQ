@@ -9,15 +9,30 @@ class UserController extends BaseController {
 	}
 	
 	public function getRegister() {
-		$this->layout->content = View::make('user.user-register');
+		if (Auth::check()) {
+			return Redirect::to('user/dashboard');
+		}
+		else {
+			$this->layout->content = View::make('user.user-register');
+		}
 	}
 	
 	public function getPassword() {
-		$this->layout->content = View::make('user.user-password');
+		if (Auth::check()) {
+			return Redirect::to('user/dashboard');
+		}
+		else {
+			$this->layout->content = View::make('user.user-password');
+		}
 	}
 	
 	public function getLogin() {
-		$this->layout->content = View::make('user.user-login');
+		if (Auth::check()) {
+			return Redirect::to('user/dashboard');
+		}
+		else {
+			$this->layout->content = View::make('user.user-login');
+		}
 	}
 	
 	public function postCreate() {
@@ -54,11 +69,18 @@ class UserController extends BaseController {
 	
 	public function getDashboard() {
 		if (Auth::check()) {
+		  $Service = new Service();
 			if (Auth::user()->user_id == 1) {
-			  $Service = new Service();
+				$services_status = array();
+				$available_services = $Service->fetchServices();
+				unset($available_services[0]);
+				foreach ($available_services as $service_id => $service_name) {
+					$services_status[$service_id] = $Service->status($service_id);
+				}
 				$this->layout->content = View::make('user.dashboard-master-admin')
-					->with('available_services', $Service->fetchAvailableServices())
-				  ->with('all_services', $Service->fetchServices());
+					->with('available_services', $available_services)
+				  ->with('all_services', $Service->fetchServices())
+				  ->with('services_status', $services_status);
 			}
 			else {
 				$this->layout->content = View::make('user.dashboard-user');

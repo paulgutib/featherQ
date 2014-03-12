@@ -17,6 +17,11 @@ class Service extends Eloquent {
 		return DB::select($sql, array($service_id))[0]->service_name;
 	}
 	
+	public function status($service_id) {
+		$sql = 'SELECT status FROM queue_service WHERE service_id=?';
+		return DB::select($sql, array($service_id))[0]->status;
+	}
+	
 	public function addService($service_name) {
 		$sql = 'INSERT INTO queue_service (service_name) VALUES (?)';
 		DB::insert($sql, array($service_name));
@@ -25,6 +30,11 @@ class Service extends Eloquent {
 	public function updateServiceName($service_name, $service_id) {
 		$sql = 'UPDATE queue_service SET service_name=? WHERE service_id=?';
 		DB::update($sql, array($service_name, $service_id));
+	}
+	
+	public function updateStatus($status, $service_id) {
+		$sql = 'UPDATE queue_service SET status=? WHERE service_id=?';
+		DB::update($sql, array($status, $service_id));
 	}
 	
 	public function fetchAvailableServices() {
