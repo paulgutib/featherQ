@@ -1,19 +1,12 @@
-<h2>Welcome to featherQ!</h2>
-<h3>Save time because time flies by!</h3>
-
 @yield('title')
 
-@if(Session::has('message'))
-	<div class="alert alert-success">
+<div>
+	@if (Session::has('message'))
 		{{Session::get('message')}}
-	</div>
-@endif
-
-@if(Session::has('error'))
-	<div class="alert alert-warning">
+	@elseif (Session::has('error'))
 		{{Session::get('error')}}
-	</div>	
-@endif
+	@endif
+</div>
 
 @if (!Auth::check())
 <div>

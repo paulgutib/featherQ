@@ -109,7 +109,8 @@ class FeatherQTables extends Migration {
 			$table->increments('login_id');
 			$table->integer('user_id')->default(0);
 			$table->integer('terminal_id')->default(0);
-			$table->integer('time_in')->default(0);
+			$table->string('in_out')->default('');
+			$table->integer('time_in_out')->default(0);
 		});
 	}
 

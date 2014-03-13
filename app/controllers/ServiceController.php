@@ -11,7 +11,7 @@ class ServiceController extends BaseController {
 		$Service = new Service();
 		$Service->addService($service_name);
 		return Redirect::to('user/dashboard')
-			->with('message', $service_name . ' has been added.');
+			->with('message', 'The service ' . $service_name . ' has been added.');
 	}
 	
 	public function postUpdate() {
@@ -39,7 +39,7 @@ class ServiceController extends BaseController {
 			
 			while ($count < count($for_deletion)) {
 				if ($service_id == $for_deletion[$count]) {
-					$delete_message .= $service_name . ' has been removed.<br/>';
+					$delete_message .= 'Service ' . $service_name . ' has been removed.<br/>';
 					$Service->deleteService($service_id);
 				}
 				$count++;

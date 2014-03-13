@@ -14,12 +14,12 @@ class Service extends Eloquent {
 	
 	public function serviceName($service_id) {
 		$sql = 'SELECT service_name FROM queue_service WHERE service_id=?';
-		return DB::select($sql, array($service_id))[0]->service_name;
+		return DB::selectOne($sql, array($service_id))->service_name;
 	}
 	
 	public function status($service_id) {
 		$sql = 'SELECT status FROM queue_service WHERE service_id=?';
-		return DB::select($sql, array($service_id))[0]->status;
+		return DB::selectOne($sql, array($service_id))->status;
 	}
 	
 	public function addService($service_name) {

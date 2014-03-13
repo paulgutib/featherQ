@@ -1,3 +1,5 @@
+@extends('user.user')
+
 @section('title')
 <strong>{{link_to('user/logout', 'Log Out')}}</strong>
 
@@ -42,8 +44,6 @@
 	{{ Form::submit('DELETE/UPDATE STATUS') }}
 	{{Form::close()}}
 </div>
-
-<div>
 	<div>
 		{{ Form::open(array('url' => 'service/add')) }}
 		<div>
@@ -61,6 +61,45 @@
 		</div>
 		{{ Form::close() }}
   </div>
-</div>
+  <br/><br/><br/><br/>
+  <div>
+		<h3>Available Terminal Types: </h3>
+		{{Form::open(array('url' => 'terminal/delete-type'))}}
+		<table cellpadding="1" border="1px">
+			<tr>
+				<td>Terminal Type Name</td>
+				<td>Delete</td>
+		  </tr>
+		  @if (isset($terminal_type_list))
+			  @foreach ($terminal_type_list as $type_id => $type_name)
+			  <tr>
+					<td>{{{ $type_name }}}</td>
+					<td>{{ Form::checkbox('terminal_type_delete[]', $type_id) }}</td>
+			  </tr>
+			  @endforeach
+			@endif
+		</table>
+		<br/>
+		{{ Form::submit('DELETE') }}
+		{{Form::close()}}
+	</div>
+  <div>
+		{{ Form::open(array('url' => 'terminal/add-type')) }}
+		<div>
+			<h3>ADD TERMINAL TYPE</h3>
+		  {{ Form::text('terminal_type_name', null, array('class'=>'input-block-level', 'placeholder'=>'Terminal Type Name')) }}
+		  {{ Form::submit('ADD') }}
+		</div>
+		{{ Form::close() }}
+		{{ Form::open(array('url' => 'terminal/update-type')) }}
+		<div>
+			<h3>EDIT TERMINAL TYPE</h3>
+		  {{ Form::select('terminal_type_list', $all_terminal_types) }}
+		  {{ Form::text('new_terminal_type_name', null, array('class'=>'input-block-level', 'placeholder'=>'New Terminal Type Name')) }}
+		  {{ Form::submit('UPDATE') }}
+		</div>
+		{{ Form::close() }}
+  </div>
+  <br/><br/><br/><br/>
 
 @stop

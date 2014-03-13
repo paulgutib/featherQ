@@ -19,3 +19,5 @@ Route::get('/', function()
 Route::controller('user', 'UserController');
 
 Route::controller('service', 'ServiceController');
+
+Route::controller('terminal', 'TerminalController');
