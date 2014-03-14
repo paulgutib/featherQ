@@ -1,12 +1,12 @@
 @yield('title')
 
-@if (!Auth::check())
 <div>
-	<strong>{{link_to('user/login', 'Login')}}</strong>
-	<strong>{{link_to('user/register', 'Sign-Up')}}</strong>
-	<strong>{{link_to('user/password', 'Forgot Password')}}</strong>
+	<strong>{{link_to('user/dashboard', 'Dashboard')}}</strong>
+	<strong>{{link_to('service/list', 'Services')}}</strong>
+	<strong>{{link_to('terminal/list', 'Terminals')}}</strong>
 </div>
-@endif
+
+<h2>SERVICE LISTING</h2>
 
 @yield('content')
 

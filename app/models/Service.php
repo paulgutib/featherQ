@@ -72,4 +72,14 @@ class Service extends Eloquent {
 		DB::delete($sql, array($service_id));
 	}
 	
+	public function checkSignupStatus($user_id, $service_id) {
+		$sql = 'SELECT COUNT(*) AS service_count FROM user_service WHERE service_id=? AND user_id=?';
+		return DB::selectOne($sql, array($service_id, $user_id))->service_count;
+	}
+	
+	public function signup($user_id, $service_id) {
+		$sql = 'INSERT INTO user_service (user_id, service_id) VALUES (?, ?)';
+		DB::insert($sql, array($user_id, $service_id));
+	}
+	
 }

@@ -17,6 +17,9 @@ Route::get('/', function()
 });
 
 Route::controller('user', 'UserController');
+Route::get('user/service/{service_id}', function() {
+	return View::make('service.service-signup-remove');
+});
 
 Route::controller('service', 'ServiceController');
 
