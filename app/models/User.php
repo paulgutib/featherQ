@@ -72,4 +72,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'password_confirmation'=>'required|between:6,30'
 	);
 	
+	public function fetchUsers() {
+		$sql = 'SELECT user_id, username, email, phone, status FROM user';
+		return DB::select($sql);
+	}
+	
+	public function setStatus($arg0, $user_id) {
+		$sql = 'UPDATE user SET status=? WHERE user_id=?';
+		DB::update($sql, array($arg0, $user_id));
+	}
+	
+	public function deleteUser($user_id) {
+		$sql = 'DELETE FROM user WHERE user_id=?';
+		DB::delete($sql, array($user_id));
+	}
+	
+	public function status($user_id) {
+		$sql = 'SELECT status FROM user WHERE user_id=?';
+		return DB::selectOne($sql, array($user_id))->status;
+	}
+	
 }

@@ -48,14 +48,8 @@ class Service extends Eloquent {
 	}
 	
 	public function fetchServices() {
-		$services = array();
-		$services[0] = '-Select a Service-';
-		$sql = 'SELECT service_id, service_name FROM queue_service';
-		$res = DB::select($sql);
-		foreach ($res as $key => $value) {
-			$services[$value->service_id] = $value->service_name;
-		}
-		return $services;
+		$sql = 'SELECT service_id, service_name, status FROM queue_service';
+		return DB::select($sql);
 	}
 	
 	public function joinService($user_id, $service_id, $others = array()) {

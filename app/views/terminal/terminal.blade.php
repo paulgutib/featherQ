@@ -1,12 +1,17 @@
 @yield('title')
 
 <div>
-	<strong>{{link_to('user/dashboard', 'Dashboard')}}</strong>
+	<strong>{{link_to('/', 'Dashboard')}}</strong>
 	<strong>{{link_to('service/list', 'Services')}}</strong>
 	<strong>{{link_to('terminal/list', 'Terminals')}}</strong>
+	<strong>{{link_to('user/list', 'Users')}}</strong>
 </div>
-
-<h2>TERMINAL LISTING</h2>
+<br/>
+<h2>TERMINALS</h2>
+<div>
+	<strong>{{link_to('terminal/list', 'List')}}</strong>
+	<strong>{{link_to('terminal/add', 'Add')}}</strong>
+</div>
 
 @yield('content')
 

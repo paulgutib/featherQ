@@ -1,5 +1,3 @@
-@extends('service.service')
-
 @section('content')
 
 <div>
@@ -10,11 +8,11 @@
 				<td>Terminal Type Name</td>
 				<td>Delete</td>
 		  </tr>
-		  @if (isset($terminal_type_list))
-			  @foreach ($terminal_type_list as $type_id => $type_name)
+		  @if (isset($types))
+			  @foreach ($types as $key => $column)
 			  <tr>
-					<td>{{{ $type_name }}}</td>
-					<td>{{ Form::checkbox('terminal_type_delete[]', $type_id) }}</td>
+					<td>{{{ $types[$key]['name'] }}}</td>
+					<td>{{ Form::checkbox('type_delete[]', $types[$key]['type_id']) }}</td>
 			  </tr>
 			  @endforeach
 			@endif
@@ -23,23 +21,6 @@
 		{{ Form::submit('DELETE') }}
 		{{Form::close()}}
 	</div>
-  <div>
-		{{ Form::open(array('url' => 'terminal/add-type')) }}
-		<div>
-			<h3>ADD TERMINAL TYPE</h3>
-		  {{ Form::text('terminal_type_name', null, array('class'=>'input-block-level', 'placeholder'=>'Terminal Type Name')) }}
-		  {{ Form::submit('ADD') }}
-		</div>
-		{{ Form::close() }}
-		{{ Form::open(array('url' => 'terminal/update-type')) }}
-		<div>
-			<h3>EDIT TERMINAL TYPE</h3>
-		  {{ Form::select('terminal_type_list', $all_terminal_types) }}
-		  {{ Form::text('new_terminal_type_name', null, array('class'=>'input-block-level', 'placeholder'=>'New Terminal Type Name')) }}
-		  {{ Form::submit('UPDATE') }}
-		</div>
-		{{ Form::close() }}
-  </div>
   <div>
 		<h3>Terminal Nodes:</h3>
 		{{Form::open(array('url' => 'terminal/updatedelete-node'))}}
@@ -50,31 +31,24 @@
 				<td>Ready to Take Queues? (Y/N)</td>
 				<td>Delete</td>
 		  </tr>
-		  @if (isset($terminal_node_list))
-			  @foreach ($terminal_node_list as $terminal_id => $terminal_name)
+		  @if (isset($nodes))
+			  @foreach ($nodes as $key => $column)
 			  <tr>
-					<td>{{{ $terminal_name }}}</td>
-					<td>{{{ $terminal_types[$terminal_id] }}}</td>
+					<td>{{{ $nodes[$key]['name'] }}}</td>
+					<td>{{{ $nodes[$key]['type'] }}}</td>
 					<td>
-						Yes {{ Form::radio('terminal_status_' . $terminal_id, 1, 1 == $terminal_status[$terminal_id]) }}
-						No {{ Form::radio('terminal_status_' . $terminal_id, 0, 0 == $terminal_status[$terminal_id]) }}
+						Yes {{ Form::radio('terminal_status_' . $nodes[$key]['terminal_id'], 1, 1 == $nodes[$key]['status']) }}
+						No {{ Form::radio('terminal_status_' . $nodes[$key]['terminal_id'], 0, 0 == $nodes[$key]['status']) }}
 					</td>
-					<td>{{ Form::checkbox('terminal_node_delete[]', $terminal_id) }}</td>
+					<td>{{ Form::checkbox('node_delete[]', $nodes[$key]['terminal_id']) }}</td>
 			  </tr>
 			  @endforeach
 			@endif
 		</table>
 		<br/>
-		{{ Form::submit('UPDATE/DELETE') }}
+		{{ Form::submit('Save Changes') }}
 		{{Form::close()}}
-		{{ Form::open(array('url' => 'terminal/add-node')) }}
-		<div>
-			<h3>ADD TERMINAL NODE</h3>
-		  {{ Form::text('terminal_node_name', null, array('class'=>'input-block-level', 'placeholder'=>'Terminal Node Name')) }}
-		  {{ Form::select('terminal_type_list', $all_terminal_types) }}
-		  {{ Form::submit('ADD') }}
-		</div>
-		{{ Form::close() }}
+		
 	</div>
   
   @stop

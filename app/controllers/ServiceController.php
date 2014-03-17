@@ -12,36 +12,45 @@ class ServiceController extends BaseController {
 		if (Auth::check()) {
 			if (Auth::user()->user_id == 1) {
 				$Service = new Service();
-				$services_status = array();
-				$available_services = $Service->fetchServices();
-				unset($available_services[0]);
-				if (isset($available_services)) {
-					foreach ($available_services as $service_id => $service_name) {
-						$services_status[$service_id] = $Service->status($service_id);
+				$services = $Service->fetchServices();
+				$service_array = array();
+				if (isset($services)) {
+					foreach ($services as $key => $object) {
+						$service_array[$key]['service_id'] = $object->service_id;
+						$service_array[$key]['service_name'] = $object->service_name;
+						$service_array[$key]['status'] = $object->status;
 					}
 				}
 				$this->layout->content = View::make('service.service-list')
-					->with('available_services', $available_services)
-					->with('all_services', $Service->fetchServices())
-					->with('services_status', $services_status);
+					->with('services', $service_array);
 			}
 			else {
-				return Redirect::to('user/dashboard')
+				return Redirect::to('/')
 					->with('error' , 'You need to be an admin to view this page.');
 			}
 		}
 		else {
-			return Redirect::to('user/login')
+			return Redirect::to('/')
 				->with('error' , 'You need to be logged in to view this page.');
 		}
 	}
 	
-	public function postAdd() {
+	public function postCreate() {
 		$service_name = Input::get('service_name');
 		$Service = new Service();
 		$Service->addService($service_name);
-		return Redirect::to('service/list')
+		return Redirect::to('service/add')
 			->with('message', 'The service ' . $service_name . ' has been added.');
+	}
+	
+	public function getAdd() {
+		if (Auth::user()->user_id == 1) {
+			$this->layout->content = View::make('service.service-add');
+		}
+		else {
+			return Redirect::to('/')
+			->with('error', 'You are not allowed to view that page.');
+		}
 	}
 	
 	public function postEdit() {
@@ -58,17 +67,17 @@ class ServiceController extends BaseController {
 		$Service = new Service();
 		$delete_message = '';
 		$service_ids = $Service->fetchServices();
-		foreach ($service_ids as $service_id => $service_name) {
+		foreach ($service_ids as $key => $object) {
 			$count = 0;
 						
 			// update the status of the service (active/inactive)
-			$status = Input::get('service_status_' . $service_id);
-			$Service->updateStatus($status, $service_id);
+			$status = Input::get('service_status_' . $object->service_id);
+			$Service->updateStatus($status, $object->service_id);
 			
 			while ($count < count($for_deletion)) {
-				if ($service_id == $for_deletion[$count]) {
-					$delete_message .= 'Service ' . $service_name . ' has been removed.<br/>';
-					$Service->deleteService($service_id);
+				if ($object->service_id == $for_deletion[$count]) {
+					$delete_message .= 'Service ' . $object->service_name . ' has been removed.<br/>';
+					$Service->deleteService($object->service_id);
 				}
 				$count++;
 			}

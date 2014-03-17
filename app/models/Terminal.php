@@ -56,25 +56,14 @@ class Terminal extends Eloquent {
 	}
 	
 	public function fetchTerminalTypes() {
-		$terminals = array();
-		$terminals[0] = '-Select a Terminal Type-';
 		$sql = 'SELECT * FROM terminal_type';
-		$res = DB::select($sql);
-		foreach ($res as $key => $value) {
-			$terminals[$value->type_id] = $value->name;
-		}
-		return $terminals;
+		return DB::select($sql);
 	}
 	
 	public function fetchTerminalNodes() {
 		$terminals = array();
-		$terminals[0] = '-Select a Terminal Node-';
 		$sql = 'SELECT * FROM terminal_list';
-		$res = DB::select($sql);
-		foreach ($res as $key => $value) {
-			$terminals[$value->terminal_id] = $value->name;
-		}
-		return $terminals;
+		return DB::select($sql);
 	}
 	
 	public function openCloseTerminal($status, $terminal_id) {
