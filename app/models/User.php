@@ -92,4 +92,24 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		return DB::selectOne($sql, array($user_id))->status;
 	}
 	
+	public function getUsername($user_id) {
+		$sql = 'SELECT username FROM user WHERE user_id=?';
+		return DB::selectOne($sql, array($user_id))->username;
+	}
+	
+	public function getEmail($user_id) {
+		$sql = 'SELECT email FROM user WHERE user_id=?';
+		return DB::selectOne($sql, array($user_id))->email;
+	}
+	
+	public function getPhone($user_id) {
+		$sql = 'SELECT phone FROM user WHERE user_id=?';
+		return DB::selectOne($sql, array($user_id))->phone;
+	}
+	
+	public function getStatus($user_id) {
+		$sql = 'SELECT status FROM user WHERE user_id=?';
+		return DB::selectOne($sql, array($user_id))->status;
+	}
+	
 }

@@ -9,6 +9,26 @@ class UserController extends BaseController {
 		$this->beforeFilter('csrf', array('on'=>'post'));
 	}
 	
+	public function getEdit($user_id) {
+		if (Auth::user()->user_id == 1) {
+			if (is_numeric($user_id)) {
+				$User = new User();
+				$this->layout->content = View::make('user.user-edit')
+					->with('user_id', $user_id)
+				  ->with('email', $User->getEmail($user_id))
+					->with('username', $User->getUsername($user_id))
+					->with('status', $User->getStatus($user_id))
+					->with('phone', $User->getPhone($user_id));
+			}
+			else {
+				return "Invalid URL";
+			}
+		}
+		else {
+			return "ACCESS DENIED!";
+		}
+	}
+	
 	public function getRegister() {
 		if (Auth::check()) {
 			return Redirect::to('/');
