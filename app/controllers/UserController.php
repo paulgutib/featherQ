@@ -11,21 +11,42 @@ class UserController extends BaseController {
 	
 	public function getEdit($user_id) {
 		if (Auth::user()->user_id == 1) {
-			if (is_numeric($user_id)) {
-				$User = new User();
-				$this->layout->content = View::make('user.user-edit')
-					->with('user_id', $user_id)
-				  ->with('email', $User->getEmail($user_id))
-					->with('username', $User->getUsername($user_id))
-					->with('status', $User->getStatus($user_id))
-					->with('phone', $User->getPhone($user_id));
+			$User = new User();
+			$roles = $User->fetchRoles();
+			$role_array = array();
+			if (isset($roles)) {
+				foreach ($roles as $key => $object) {
+					if ($object->role_id != 1) {
+						$role_array[$object->role_id] = $object->name;
+					}
+				}
 			}
-			else {
-				return "Invalid URL";
-			}
+			$birthdate = $User->getBirthdate($user_id);
+			$month = date("m", $birthdate);
+			$year = date("Y", $birthdate);
+			$day = date("d", $birthdate);
+			$this->layout->content = View::make('user.user-edit')
+			  ->with('user_id', $user_id)
+				->with('roles', $role_array)
+				->with('role_id', $User->getRoleId($user_id))
+				->with('days', $this->getDays())
+				->with('years', $this->getYears())
+				->with('months' , $this->getMonths())
+				->with('user_id', $user_id)
+				->with('email', $User->getEmail($user_id))
+				->with('username', $User->getUsername($user_id))
+				->with('status', $User->getStatus($user_id))
+				->with('fullname', $User->getFullname($user_id))
+				->with('month', $month)
+				->with('year', $year)
+				->with('day', $day)
+				->with('location', $User->getLocation($user_id))
+				->with('sex', $User->getSex($user_id))
+				->with('phone', $User->getPhone($user_id));
 		}
 		else {
-			return "ACCESS DENIED!";
+			return Redirect::to('/')
+			->with('error', 'You are not allowed to view that page.');
 		}
 	}
 	
@@ -66,6 +87,7 @@ class UserController extends BaseController {
 					if ($object->user_id != 1) {
 						$user_array[$key]['user_id'] = $object->user_id;
 						$user_array[$key]['username'] = $object->username;
+						$user_array[$key]['role'] = $User->getRoleNameByUserId($object->user_id);
 						$user_array[$key]['email'] = $object->email;
 						$user_array[$key]['phone'] = $object->phone;
 						$user_array[$key]['status'] = $object->status;
@@ -83,27 +105,25 @@ class UserController extends BaseController {
 	
 	public function getAdd() {
 		if (Auth::user()->user_id == 1) {
-			$this->layout->content = View::make('user.user-add');
+			$User = new User();
+			$roles = $User->fetchRoles();
+			$role_array = array();
+			if (isset($roles)) {
+				foreach ($roles as $key => $object) {
+					if ($object->role_id != 1) {
+						$role_array[$object->role_id] = $object->name;
+					}
+				}
+			}
+			$this->layout->content = View::make('user.user-add')
+			  ->with('roles', $role_array)
+				->with('days', $this->getDays())
+			  ->with('years', $this->getYears())
+				->with('months' , $this->getMonths());
 		}
 		else {
 			return Redirect::to('/')
 				->with('error', 'You are not allowed to view that page.');
-		}
-	}
-	
-	public function postCreateViaAdmin() {
-		$validator = Validator::make(Input::all(), User::$rules);
-		if ($validator->passes()) {
-			$user = new User;
-			$user->username = Input::get('username');
-			$user->phone = Input::get('phone');
-			$user->email = Input::get('email');
-			$user->password = Hash::make(Input::get('password'));
-			$user->save();
-			return Redirect::to('user/add')->with('message', 'Username ' .
-					$user->username . ' has been created.');
-		} else {
-			return Redirect::to('user/add')->with('message', 'The following errors occurred')->withErrors($validator)->withInput();
 		}
 	}
 	
@@ -136,15 +156,34 @@ class UserController extends BaseController {
 	public function postCreate() {
 		$validator = Validator::make(Input::all(), User::$rules);
 		if ($validator->passes()) {
-	    $user = new User;
-	    $user->username = Input::get('username');
-	    $user->phone = Input::get('phone');
-	    $user->email = Input::get('email');
-	    $user->password = Hash::make(Input::get('password'));
-	    $user->save();
-	    return Redirect::to('/')->with('message', 'Thanks for registering!');
+	    $User = new User;
+	    $birthdate = mktime(0, 0, 0, Input::get('month'), Input::get('day'), Input::get('year'));
+	    $message = $User->registerAccount(Input::get('email'), Input::get('username'),
+	    		Hash::make(Input::get('password')), Input::get('phone'), Input::get('fullname'),
+	    		$birthdate, Input::get('sex'), Input::get('location'), Input::get('nationality'));
+	    return Redirect::to($this->roleRedirect(Input::get('add_type'),
+	    		Input::get('role'), $User->getUserId(Input::get('username'))))
+	    	->with('message', $message);
 		} else {
 		  return Redirect::to('/')->with('message', 'The following errors occurred')->withErrors($validator)->withInput();
+		}
+	}
+	
+	public function postUpdate() {
+		$validator = Validator::make(Input::all(), User::$rules);
+		if ($validator->passes()) {
+			$User = new User;
+			$birthdate = mktime(0, 0, 0, Input::get('month'), Input::get('day'), Input::get('year'));
+			$message = $User->updateAccount(Input::get('email'), Input::get('username'),
+					Hash::make(Input::get('password')), Input::get('phone'), Input::get('fullname'),
+					$birthdate, Input::get('sex'), Input::get('location'), Input::get('nationality'),
+					Input::get('user_id'));
+			return Redirect::to('user/edit/' . Input::get('user_id'))
+				->with('message', $message);
+		} else {
+			return Redirect::to('user/edit/' . Input::get('user_id'))
+				->with('message', 'The following errors occurred')
+				->withErrors($validator)->withInput();
 		}
 	}
 	
@@ -159,10 +198,67 @@ class UserController extends BaseController {
 		}
 	}
 	
+	public function postUpdateViaAdmin() {
+		
+	}
+	
 	public function getLogout() {
 		Auth::logout();
 		return Redirect::to('/')
 			->with('message', 'You are now logged out');
+	}
+	
+	public function getMonths() {
+		$month = 1;
+		while ($month <= 12) {
+			$months[$month] = date("M", mktime(0, 0, 0, $month));
+			$month++;
+		}
+		return $months;
+	}
+	
+	public function getDays() {
+		$day = 1;
+		while ($day <= 31) {
+			$days[$day] = $day;
+			$day++;
+		}
+		return $days;
+	}
+	
+	public function getYears() {
+		$year = 1930;
+		while ($year <= date("Y", time())) {
+			$years[$year] = $year;
+			$year++;
+		}
+		return $years;
+	}
+	
+	private function roleRedirect($add_type, $role_id, $user_id) {
+		$User = new User;
+		if ($add_type == 'admin') {
+			$redirect_to = 'user/add';
+			$User->insertRole($role_id, $user_id);
+		}
+		else {
+			$redirect_to = '/';
+			$User->insertRole(4, $user_id);
+		}
+		return $redirect_to;
+	}
+	
+	private function roleRedirectV2($add_type, $role_id, $user_id) {
+		$User = new User;
+		if ($add_type == 'admin') {
+			$redirect_to = 'user/add';
+			$User->insertRole($role_id, $user_id);
+		}
+		else {
+			$redirect_to = '/';
+			$User->insertRole(4, $user_id);
+		}
+		return $redirect_to;
 	}
 	
 }

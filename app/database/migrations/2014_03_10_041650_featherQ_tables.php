@@ -92,6 +92,11 @@ class FeatherQTables extends Migration {
 			$table->string('password')->default('');
 			$table->integer('phone')->default(0);
 			$table->integer('status')->default(1);
+			$table->string('full_name')->default('');
+			$table->integer('birthdate')->default(0);
+			$table->string('sex')->default('');
+			$table->string('location')->default('');
+			$table->string('nationality')->default('');
 			$table->unique('username', 'email');
 		});
 		Schema::create('user_role', function($table) {

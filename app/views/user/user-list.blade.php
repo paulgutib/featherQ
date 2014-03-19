@@ -6,6 +6,7 @@
 <table cellpadding="1" border="1px">
 	<tr>
 		<td>Username</td>
+		<td>Role</td>
 		<td>Email</td>
 		<td>Phone</td>
 		<td>Active? (Y/N)</td>
@@ -16,6 +17,7 @@
 	  @foreach ($users as $key => $column)
 	  <tr>
 	  	<td>{{ $users[$key]['username'] }} </td>
+	  	<td>{{ $users[$key]['role'] }}</td>
 	  	<td>{{ $users[$key]['email'] }} </td>
 	  	<td>{{ $users[$key]['phone'] }} </td>
 	  	<td>
